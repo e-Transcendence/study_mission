@@ -45,7 +45,7 @@ if __name__ == 'main':
         # If the index is evenly divisible by 1000, print a message
         if( (i+1)%1000 == 0 ):
             print("Review %d of %d\n" % ( i+1, num_reviews ))
-        clean_train_reviews.append( review_to_words( train["review"][i] ))
+        clean_train_reviews.append(review_to_words( train["review"][i] ))
 
     # Initialize the "CountVectorizer" object, which is scikit-learn's
     # bag of words tool.
