@@ -1,9 +1,11 @@
-import time
+import pygame
 from sklearn.cluster import KMeans
 from gensim.models import Word2Vec
 import numpy as np
 import pandas as pd
-from study_mission.part_2_word2vec import review_to_wordlist, num_features
+from sklearn.ensemble import RandomForestClassifier
+
+from study_mission.part_2_word2vec import review_to_wordlist
 
 model = Word2Vec.load("D:\All_project\study_mission\\300features_40minwords_10context")
 train = pd.read_csv("D:\All_project\study_mission\\labeledTrainData.tsv", header=0, delimiter="\t", quoting=3)
@@ -30,8 +32,8 @@ for cluster in range(0, 10):
     # Find all of the words for that cluster number, and print them out
     words = []
     for i in range(0, len(word_centroid_map.values())):
-        if (word_centroid_map.values()[i] == cluster):
-            words.append(word_centroid_map.keys()[i])
+        if ([word_centroid_map.values()][i] == cluster):
+            words.append([word_centroid_map.keys()][i])
     print(words)
 
 
@@ -55,26 +57,32 @@ def create_bag_of_centroids(wordlist, word_centroid_map):
     # Return the "bag of centroids"
     return bag_of_centroids
 
+clean_train_reviews = []
+for review in train["review"]:
+    clean_train_reviews.append(review_to_wordlist(review, remove_stopwords=True))
+
+
+print("Creating average feature vecs for test reviews")
+clean_test_reviews = []
+for review in test["review"]:
+    clean_test_reviews.append(review_to_wordlist(review,remove_stopwords=True))
+
 
 # Pre-allocate an array for the training set bags of centroids (for speed)
-train_centroids = np.zeros((train["review"].size, num_clusters),
-                           dtype="float32")
+train_centroids = np.zeros((train["review"].size, num_clusters),dtype="float32")
 
 # Transform the training set reviews into bags of centroids
 counter = 0
 for review in clean_train_reviews:
-    train_centroids[counter] = create_bag_of_centroids(review,
-                                                       word_centroid_map)
+    train_centroids[counter] = create_bag_of_centroids(review,word_centroid_map)
     counter += 1
 
 # Repeat for test reviews
-test_centroids = np.zeros((test["review"].size, num_clusters),
-                          dtype="float32")
+test_centroids = np.zeros((test["review"].size, num_clusters),dtype="float32")
 
 counter = 0
 for review in clean_test_reviews:
-    test_centroids[counter] = create_bag_of_centroids(review,
-                                                      word_centroid_map)
+    test_centroids[counter] = create_bag_of_centroids(review,word_centroid_map)
     counter += 1
 
 # Fit a random forest and extract predictions
@@ -88,3 +96,10 @@ result = forest.predict(test_centroids)
 # Write the test results
 output = pd.DataFrame(data={"id": test["id"], "sentiment": result})
 output.to_csv("BagOfCentroids.csv", index=False, quoting=3)
+
+pygame.mixer.init()
+track = pygame.mixer.music.load('D:\All_project\stock_prediction\src\叮.mp3')
+for i in range(2):
+    pygame.mixer.music.play()
+    time.sleep(1)
+    pygame.mixer.music.stop()

@@ -61,8 +61,7 @@ trainDataVecs = getAvgFeatureVecs(clean_train_reviews, model, num_features)
 print("Creating average feature vecs for test reviews")
 clean_test_reviews = []
 for review in test["review"]:
-    clean_test_reviews.append(review_to_wordlist(review,
-                                                 remove_stopwords=True))
+    clean_test_reviews.append(review_to_wordlist(review,remove_stopwords=True))
 
 testDataVecs = getAvgFeatureVecs(clean_test_reviews, model, num_features)
 
