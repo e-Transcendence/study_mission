@@ -58,38 +58,8 @@ def getAvgFeatureVecs(reviews, model, num_features):
     return reviewFeatureVecs
 
 
-# ****************************************************************
-# Calculate average feature vectors for training and testing sets,
-# using the functions we defined above. Notice that we now use stop word
-# removal.
 
-clean_train_reviews = []
-for review in train["review"]:
-    clean_train_reviews.append(review_to_wordlist(review, remove_stopwords=True))
 
-trainDataVecs = getAvgFeatureVecs(clean_train_reviews, model, num_features)
-
-print("Creating average feature vecs for test reviews")
-clean_test_reviews = []
-for review in test["review"]:
-    clean_test_reviews.append(review_to_wordlist(review,
-                                                 remove_stopwords=True))
-
-testDataVecs = getAvgFeatureVecs(clean_test_reviews, model, num_features)
-
-forest = RandomForestClassifier( n_estimators = 100 )
-
-print ("Fitting a random forest to labeled training data...")
-forest = forest.fit( trainDataVecs, train["sentiment"] )
-
-# Test & extract results
-result = forest.predict( testDataVecs )
-
-# Write the test results
-output = pd.DataFrame( data={"id":test["id"], "sentiment":result} )
-output.to_csv( "Word2Vec_AverageVectors.csv", index=False, quoting=3 )
-
-start = time.time()  # Start time
 
 # Set "k" (num_clusters) to be 1/5th of the vocabulary size, or an
 # average of 5 words per cluster
@@ -99,15 +69,12 @@ num_clusters = int(word_vectors.shape[0] / 5)
 kmeans_clustering = KMeans(n_clusters=num_clusters)
 idx = kmeans_clustering.fit_predict(word_vectors)
 
-# Get the end time and print how long the process took
-end = time.time()
-elapsed = end - start
-print("Time taken for K Means clustering: ", elapsed, "seconds.")
 
 # Create a Word / Index dictionary, mapping each vocabulary word to
 # a cluster number
 word_centroid_map = dict(zip(model.wv.index2word, idx))
 
+"""
 # For the first 10 clusters
 for cluster in range(0, 10):
     #
@@ -116,7 +83,7 @@ for cluster in range(0, 10):
     #
     # Find all of the words for that cluster number, and print them out
     words = []
-    for i in xrange(0, len(word_centroid_map.values())):
+    for i in range(0, len(word_centroid_map.values())):
         if (word_centroid_map.values()[i] == cluster):
             words.append(word_centroid_map.keys()[i])
     print(words)
@@ -175,3 +142,4 @@ result = forest.predict(test_centroids)
 # Write the test results
 output = pd.DataFrame(data={"id": test["id"], "sentiment": result})
 output.to_csv("BagOfCentroids.csv", index=False, quoting=3)
+"""
