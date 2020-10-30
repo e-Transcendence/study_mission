@@ -32,8 +32,8 @@ for cluster in range(0, 10):
     # Find all of the words for that cluster number, and print them out
     words = []
     for i in range(0, len(word_centroid_map.values())):
-        if ([word_centroid_map.values()][i] == cluster):
-            words.append([word_centroid_map.keys()][i])
+        if (list(word_centroid_map.values())[i] == cluster):
+            words.append(list(word_centroid_map.keys())[i])
     print(words)
 
 
@@ -41,7 +41,7 @@ def create_bag_of_centroids(wordlist, word_centroid_map):
     #
     # The number of clusters is equal to the highest cluster index
     # in the word / centroid map
-    num_centroids = max(word_centroid_map.values()) + 1
+    num_centroids = max(list(word_centroid_map.values())) + 1
     #
     # Pre-allocate the bag of centroids vector (for speed)
     bag_of_centroids = np.zeros(num_centroids, dtype="float32")
